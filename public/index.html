@@ -5,16 +5,13 @@
   <title>The Raju Game</title>
   
   <!-- MediaPipe Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
   <style>
-    /* ===============================
-       BODY & BACKGROUND
-    ============================== */
     body {
       margin: 0;
       font-family: 'Arial', sans-serif;
-      background: linear-gradient(to top, #70c5ce, #f0f9ff); /* sky */
+      background: linear-gradient(to top, #70c5ce, #f0f9ff);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -23,9 +20,6 @@
       overflow: hidden;
     }
 
-    /* ===============================
-       GAME TITLE
-    ============================== */
     h1#gameTitle {
       font-size: 48px;
       color: #ffcc00;
@@ -33,9 +27,6 @@
       margin: 10px 0 5px 0;
     }
 
-    /* ===============================
-       GAME DESCRIPTION
-    ============================== */
     p#gameDesc {
       font-size: 20px;
       color: white;
@@ -44,18 +35,13 @@
       text-align: center;
     }
 
-    /* ===============================
-       GAME + INSTRUCTION CONTAINER
-    ============================== */
     #gameContainer {
       display: flex;
       align-items: flex-start;
       gap: 20px;
+      position: relative;
     }
 
-    /* ===============================
-       GAME CANVAS
-    ============================== */
     canvas#game {
       border: 2px solid #000;
       border-radius: 10px;
@@ -63,9 +49,6 @@
       box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     }
 
-    /* ===============================
-       INSTRUCTION BOX
-    ============================== */
     #instruction {
       display: flex;
       flex-direction: column;
@@ -86,9 +69,6 @@
       width: 150px;
     }
 
-    /* ===============================
-       START BUTTON
-    ============================== */
     #startBtn {
       margin-top: 15px;
       padding: 12px 25px;
@@ -107,11 +87,7 @@
       box-shadow: 0 3px #cc7a00;
     }
 
-    /* ===============================
-       RETRY BUTTON
-    ============================== */
     #retryBtn {
-      margin-top: 15px;
       padding: 12px 25px;
       font-size: 18px;
       font-weight: bold;
@@ -121,16 +97,19 @@
       background: linear-gradient(to bottom, #ff4444, #cc0000);
       box-shadow: 0 5px #880000;
       transition: all 0.1s ease;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      display: none;
     }
 
     #retryBtn:active {
-      transform: translateY(2px);
+      transform: translate(-50%, -50%) translateY(2px);
       box-shadow: 0 3px #880000;
     }
 
-    /* ===============================
-       SCORE DISPLAY
-    ============================== */
     #score {
       position: absolute;
       top: 20px;
@@ -142,62 +121,37 @@
       text-shadow: 2px 2px #000;
     }
 
-    /* ===============================
-       HIDDEN VIDEO
-    ============================== */
-    #video {
-      display: none;
-    }
+    #video { display: none; }
 
-    /* ===============================
-       RESPONSIVE ADJUSTMENTS
-    ============================== */
     @media(max-width: 900px){
       #gameContainer {
         flex-direction: column;
         align-items: center;
       }
-
-      #instruction img {
-        width: 120px;
-      }
+      #instruction img { width: 120px; }
     }
-
   </style>
 </head>
 <body>
 
-  <!-- Game Title -->
   <h1 id="gameTitle">The Raju Game</h1>
-
-  <!-- Game Description -->
   <p id="gameDesc">Move your head and save Raju from Radhu</p>
 
-  <!-- Hidden video for hand detection & frame capture -->
   <video id="video" autoplay playsinline></video>
 
-  <!-- Game + Instruction Container -->
   <div id="gameContainer">
-    <!-- Game Canvas -->
     <canvas id="game" width="400" height="600"></canvas>
-
-    <!-- Instruction -->
     <div id="instruction">
       <img src="/static/fist.gif" alt="Fist gesture">
       <p>Open & close your fist to control Raju!</p>
     </div>
+
+    <button id="retryBtn">Retry</button>
   </div>
 
-  <!-- Start Button -->
   <button id="startBtn">Play Game</button>
-
-  <!-- Retry Button (hidden initially) -->
-  <button id="retryBtn" style="display: none;">Retry</button>
-
-  <!-- Score Display -->
   <div id="score">0</div>
 
-  <!-- Game JS -->
   <script src="/static/js/game.js"></script>
 </body>
 </html>
