@@ -1,8 +1,13 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+// Bird (Raju) image
 const birdImg = new Image();
 birdImg.src = "/static/custom_bird.png";
+
+// Pipe image
+const pipeImg = new Image();
+pipeImg.src = "/static/pipe.png"; // overlay image for pipes
 
 let birdY = 300;
 let velocity = 0;
@@ -17,7 +22,7 @@ const pipeWidth = 50;
 const gap = 150;
 const pipeSpeed = 2;
 
-let gameStarted = false; // NEW: game only starts after button
+let gameStarted = false;
 let cameraStarted = false;
 
 // Bird flap function
@@ -33,7 +38,7 @@ function autoFlap() {
   if (birdMiddle > targetY + 10 || velocity > 4) flap();
 }
 
-// Initial flap burst to prevent fall
+// Initial flap burst to prevent falling at start
 function initialFlapBurst() {
   let count = 0;
   const burst = setInterval(() => {
@@ -53,20 +58,25 @@ setInterval(() => {
 
 // Draw pipes and check collisions
 function drawPipes() {
-  ctx.fillStyle = "#008000";
   pipes.forEach(pipe => {
-    ctx.fillRect(pipe.x, 0, pipeWidth, pipe.topHeight);
-    ctx.fillRect(pipe.x, pipe.bottomY, pipeWidth, canvas.height - pipe.bottomY);
+    // Draw pipe image
+    ctx.drawImage(pipeImg, pipe.x, 0, pipeWidth, pipe.topHeight);
+    ctx.drawImage(pipeImg, pipe.x, pipe.bottomY, pipeWidth, canvas.height - pipe.bottomY);
+
+    // Move pipes
     pipe.x -= pipeSpeed;
 
+    // Collision detection
     if (
       150 + 50 > pipe.x && 150 < pipe.x + pipeWidth &&
       (birdY < pipe.topHeight || birdY + 50 > pipe.bottomY)
     ) gameOver = true;
 
+    // Increment score when bird passes pipe
     if (pipe.x + pipeWidth === 150) score++;
   });
 
+  // Remove off-screen pipes
   pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
 }
 
@@ -89,26 +99,34 @@ function gameLoop() {
     return;
   }
 
+  // Gravity & movement
   velocity += gravity;
   birdY += velocity;
 
+  // Boundaries
   const groundY = canvas.height - 50;
   if (birdY + 50 > groundY) { birdY = groundY - 50; velocity = 0; gameOver = true; }
   if (birdY < 0) { birdY = 0; velocity = 0; }
 
+  // Clear & draw background
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#4ec0ca";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  // Draw pipes
   drawPipes();
 
+  // Auto-flap
   autoFlap();
 
+  // Draw bird
   ctx.drawImage(birdImg, 150, birdY, 50, 50);
 
+  // Draw ground
   ctx.fillStyle = "#8B4513";
   ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
 
+  // Draw score
   ctx.fillStyle = "white";
   ctx.font = "30px Arial";
   ctx.fillText(score, 10, 40);
