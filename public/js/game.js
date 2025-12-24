@@ -115,7 +115,7 @@ document.getElementById("retryBtn").onclick = () => {
   document.getElementById("retryBtn").disabled = true;
   document.getElementById("score").textContent = score;
   initialFlapBurst();
-  setTimeout(gameLoop, 0);
+  gameLoop();
 };
 
 // ===== Send frames to backend =====
