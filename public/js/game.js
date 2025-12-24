@@ -2,10 +2,10 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 const birdImg = new Image();
-birdImg.src = "./assets/custom_bird.png";
+birdImg.src = "../assets/custom_bird.png";
 
 const pipeImg = new Image();
-pipeImg.src = "./assets/pipe.png";
+pipeImg.src = "../assets/pipe.png";
 
 let birdY = 300,
     velocity = 0,
