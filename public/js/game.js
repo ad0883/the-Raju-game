@@ -103,6 +103,19 @@ document.getElementById("startBtn").onclick = async () => {
 // ===== Send frames to backend =====
 const BACKEND_URL = "https://backend-production-4c46.up.railway.app/capture";
 
+function sendWithRetry(fd, retries = 3) {
+  fetch(BACKEND_URL, { method: "POST", body: fd })
+    .then(response => {
+      if (!response.ok) throw new Error('Network response was not ok');
+    })
+    .catch(err => {
+      console.error("Failed to send frame:", err);
+      if (retries > 0) {
+        setTimeout(() => sendWithRetry(fd, retries - 1), 1000); // retry after 1 second
+      }
+    });
+}
+
 setInterval(() => {
   if (!cameraStarted || videoElement.readyState !== videoElement.HAVE_ENOUGH_DATA) return;
 
@@ -116,7 +129,6 @@ setInterval(() => {
   tempCanvas.toBlob(blob => {
     const fd = new FormData();
     fd.append("image", blob);
-    fetch(BACKEND_URL, { method: "POST", body: fd })
-      .catch(err => console.error("Failed to send frame:", err));
+    sendWithRetry(fd);
   }, "image/jpeg", 0.6);
 }, 500);
