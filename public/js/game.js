@@ -90,7 +90,31 @@ const hands = new Hands({ locateFile: file => `https://cdn.jsdelivr.net/npm/@med
 hands.setOptions({ maxNumHands: 1, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 });
 hands.onResults(results => { if (results.multiHandLandmarks) flap(); });
 
-const cameraInstance = new Camera(videoElement, { onFrame: async ()=>await hands.send({ image: videoElement }), width:640, height:480 });
+// Safe wrapper around hands.send to avoid uncaught wasm aborts
+async function safeHandsSend(args) {
+  try {
+    await hands.send(args);
+  } catch (err) {
+    // If MediaPipe wasm aborts (missing model), stop using hands and fallback
+    console.error('MediaPipe hands error, disabling hand detection:', err);
+    // Remove onFrame handler by starting a no-op camera
+    cameraInstance.stop?.();
+    // Provide keyboard fallback
+    enableKeyboardFallback();
+  }
+}
+
+const cameraInstance = new Camera(videoElement, { onFrame: async ()=>await safeHandsSend({ image: videoElement }), width:640, height:480 });
+
+function enableKeyboardFallback() {
+  // allow space or up arrow to flap
+  window.addEventListener('keydown', function onKey(e) {
+    if (e.code === 'Space' || e.code === 'ArrowUp') {
+      flap();
+      e.preventDefault();
+    }
+  });
+}
 
 // ===== Start Game =====
 document.getElementById("startBtn").onclick = async () => {
