@@ -7,14 +7,26 @@ birdImg.src = "./assets/custom_bird.png";
 const pipeImg = new Image();
 pipeImg.src = "./assets/pipe.png";
 
-let birdY = 300, velocity = 0, gameOver = false, score = 0;
-const gravity = 0.35, flapStrength = -6;
-let pipes = [], pipeWidth = 50, gap = 150, pipeSpeed = 2;
+let birdY = 300,
+    velocity = 0,
+    gameOver = false,
+    score = 0;
 
-let gameStarted = false, cameraStarted = false;
+const gravity = 0.35,
+      flapStrength = -6;
+
+let pipes = [],
+    pipeWidth = 50,
+    gap = 150,
+    pipeSpeed = 2;
+
+let gameStarted = false,
+    cameraStarted = false;
 let animationId = null;
 
-function flap() { velocity = flapStrength; }
+function flap() {
+  velocity = flapStrength;
+}
 
 function autoFlap() {
   let targetY = canvas.height / 2;
@@ -74,10 +86,9 @@ function gameLoop() {
     ctx.font = "40px Arial";
     ctx.fillText("Game Over!", 80, 300);
 
+    // Show Retry button always when game is over
     const retryBtn = document.getElementById("retryBtn");
-    if (retryBtn.style.display === "none") {
-        retryBtn.style.display = "inline-block";
-    }
+    retryBtn.style.display = "inline-block";
 
     return;
   }
