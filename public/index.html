@@ -3,201 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <title>The Raju Game</title>
-  
-  <!-- MediaPipe Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
   <style>
-    /* ===============================
-       BODY & BACKGROUND
-    ============================== */
     body {
       margin: 0;
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(to top, #70c5ce, #f0f9ff); /* sky */
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to top, #70c5ce, #f0f9ff);
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
       height: 100vh;
-      overflow: hidden;
     }
 
-    /* ===============================
-       GAME TITLE
-    ============================== */
-    h1#gameTitle {
-      font-size: 48px;
-      color: #ffcc00;
-      text-shadow: 2px 2px #000;
-      margin: 10px 0 5px 0;
-    }
-
-    /* ===============================
-       GAME DESCRIPTION
-    ============================== */
-    p#gameDesc {
-      font-size: 20px;
-      color: white;
-      text-shadow: 1px 1px #000;
-      margin: 0 0 20px 0;
-      text-align: center;
-    }
-
-    /* ===============================
-       GAME + INSTRUCTION CONTAINER
-    ============================== */
-    #gameContainer {
-      display: flex;
-      align-items: flex-start;
-      gap: 20px;
-    }
-
-    /* ===============================
-       GAME CANVAS
-    ============================== */
-    canvas#game {
-      border: 2px solid #000;
+    canvas {
+      border: 2px solid black;
       border-radius: 10px;
-      background: #70c5ce;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     }
 
-    /* ===============================
-       INSTRUCTION BOX
-    ============================== */
-    #instruction {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: rgba(255,255,255,0.1);
-      padding: 10px 15px;
-      border-radius: 10px;
-      color: white;
-      text-align: center;
-      font-size: 16px;
-      text-shadow: 1px 1px #000;
-    }
-
-    #instruction img {
-      border-radius: 8px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      margin-bottom: 10px;
-      width: 150px;
-    }
-
-    /* ===============================
-       START BUTTON
-    ============================== */
-    #startBtn {
-      margin-top: 15px;
-      padding: 12px 25px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      background: linear-gradient(to bottom, #ffcc00, #ff9900);
-      box-shadow: 0 5px #cc7a00;
-      transition: all 0.1s ease;
-    }
-
-    #startBtn:active {
-      transform: translateY(2px);
-      box-shadow: 0 3px #cc7a00;
-    }
-
-    /* ===============================
-       RETRY BUTTON
-    ============================== */
-    #retryBtn {
-      margin-top: 15px;
-      padding: 12px 25px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      background: linear-gradient(to bottom, #ff4444, #cc0000);
-      box-shadow: 0 5px #880000;
-      transition: all 0.1s ease;
-    }
-
-    #retryBtn:active {
-      transform: translateY(2px);
-      box-shadow: 0 3px #880000;
-    }
-
-    /* ===============================
-       SCORE DISPLAY
-    ============================== */
     #score {
       position: absolute;
       top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
       font-size: 36px;
-      font-weight: bold;
       color: white;
-      text-shadow: 2px 2px #000;
+      text-shadow: 2px 2px black;
     }
 
-    /* ===============================
-       HIDDEN VIDEO
-    ============================== */
+    button {
+      margin-top: 10px;
+      padding: 12px 25px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 8px;
+      border: none;
+    }
+
+    #retryBtn {
+      display: none;
+      background: #cc0000;
+      color: white;
+    }
+
     #video {
       display: none;
     }
-
-    /* ===============================
-       RESPONSIVE ADJUSTMENTS
-    ============================== */
-    @media(max-width: 900px){
-      #gameContainer {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      #instruction img {
-        width: 120px;
-      }
-    }
-
   </style>
 </head>
+
 <body>
 
-  <!-- Game Title -->
-  <h1 id="gameTitle">The Raju Game</h1>
+  <h1>The Raju Game</h1>
+  <p>Move your hand to control Raju</p>
 
-  <!-- Game Description -->
-  <p id="gameDesc">Move your head and save Raju from Radhu</p>
-
-  <!-- Hidden video for hand detection & frame capture -->
   <video id="video" autoplay playsinline></video>
 
-  <!-- Game + Instruction Container -->
-  <div id="gameContainer">
-    <!-- Game Canvas -->
-    <canvas id="game" width="400" height="600"></canvas>
+  <canvas id="game" width="400" height="600"></canvas>
 
-    <!-- Instruction -->
-    <div id="instruction">
-      <img src="/static/fist.gif" alt="Fist gesture">
-      <p>Open & close your fist to control Raju!</p>
-    </div>
-  </div>
-
-  <!-- Start Button -->
-  <button id="startBtn">Play Game</button>
-
-  <!-- Retry Button (hidden initially) -->
-  <button id="retryBtn" style="display: none;">Retry</button>
-
-  <!-- Score Display -->
   <div id="score">0</div>
 
-  <!-- Game JS -->
-  <script src="/static/js/game.js"></script>
+  <button id="startBtn">Play Game</button>
+  <button id="retryBtn">Retry</button>
+
+  <script src="./static/js/game.js"></script>
 </body>
 </html>
