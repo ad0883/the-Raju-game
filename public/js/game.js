@@ -167,7 +167,6 @@ document.getElementById("startBtn").addEventListener("click", async () => {
   }
 });
 
-/* ===== RETRY GAME (FIXED) ===== */
 document.getElementById("retryBtn").addEventListener("click", () => {
   // Reset game state
   birdY = 300;
@@ -176,20 +175,18 @@ document.getElementById("retryBtn").addEventListener("click", () => {
   pipes = [];
   gameOver = false;
 
+  // Update score display
+  document.getElementById("score").textContent = score;
+
   // Hide retry button
   const retryBtn = document.getElementById("retryBtn");
   retryBtn.style.display = "none";
 
-  // Update score display
-  document.getElementById("score").textContent = score;
-
-  // Restart game
+  // Start game
   gameStarted = true;
   initialFlapBurst();
-
-  if (!animationId) animationId = requestAnimationFrame(gameLoop);
+  // No need to call requestAnimationFrame again if gameLoop is already running
 });
-
 /* ===== SEND FRAMES ===== */
 const BACKEND_URL = "https://backend-production-4c46.up.railway.app/capture";
 
