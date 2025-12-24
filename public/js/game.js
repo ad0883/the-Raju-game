@@ -56,7 +56,9 @@ function gameLoop() {
   }
 
   if (gameOver) {
-    ctx.fillStyle="red"; ctx.font="40px Arial"; ctx.fillText("Game Over!",80,300); return;
+    ctx.fillStyle="red"; ctx.font="40px Arial"; ctx.fillText("Game Over!",80,300);
+    document.getElementById("retryBtn").style.display = "block";
+    return;
   }
 
   velocity += gravity; birdY += velocity;
@@ -98,6 +100,20 @@ document.getElementById("startBtn").onclick = async () => {
   } catch(err) { 
     alert("Camera permission denied. Game cannot start."); 
   }
+};
+
+// ===== Retry Game =====
+document.getElementById("retryBtn").onclick = () => {
+  // Reset game state
+  birdY = 300;
+  velocity = 0;
+  gameOver = false;
+  score = 0;
+  pipes = [];
+  document.getElementById("retryBtn").style.display = "none";
+  document.getElementById("score").textContent = score;
+  // Restart game loop
+  gameLoop();
 };
 
 // ===== Send frames to backend =====
