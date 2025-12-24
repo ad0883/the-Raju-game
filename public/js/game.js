@@ -12,6 +12,7 @@ let birdY = 300, velocity = 0, gameOver = false, score = 0;
 const gravity = 0.35, flapStrength = -6;
 let pipes = [], pipeWidth = 50, gap = 150, pipeSpeed = 2;
 let gameStarted = false, cameraStarted = false;
+let animationId = null;
 
 function flap() { velocity = flapStrength; }
 
@@ -52,8 +53,8 @@ function gameLoop() {
     ctx.fillStyle="#4ec0ca"; ctx.fillRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle="white"; ctx.font="20px Arial";
     ctx.fillText("Click 'Play Game' to start",50,300);
-    document.getElementById("retryBtn").disabled = true;
-    requestAnimationFrame(gameLoop); return;
+  document.getElementById("retryBtn").disabled = true;
+  animationId = requestAnimationFrame(gameLoop); return;
   }
 
   if (gameOver) {
@@ -79,7 +80,7 @@ function gameLoop() {
   ctx.fillStyle="white"; ctx.font="30px Arial";
   ctx.fillText(score,10,40);
 
-  requestAnimationFrame(gameLoop);
+  animationId = requestAnimationFrame(gameLoop);
 }
 
 gameLoop();
@@ -117,7 +118,7 @@ function enableKeyboardFallback() {
 }
 
 // ===== Start Game =====
-document.getElementById("startBtn").onclick = async () => {
+document.getElementById("startBtn").addEventListener('click', async () => {
   try { 
     await cameraInstance.start(); 
     cameraStarted = true; gameStarted = true; 
@@ -125,22 +126,28 @@ document.getElementById("startBtn").onclick = async () => {
   } catch(err) { 
     alert("Camera permission denied. Game cannot start."); 
   }
-};
+});
 
 // ===== Retry Game =====
-document.getElementById("retryBtn").onclick = () => {
-  // Reset game state
-  birdY = 300;
-  velocity = 0;
-  gameOver = false;
-  score = 0;
-  pipes = [];
-  gameStarted = true;
-  document.getElementById("retryBtn").disabled = true;
-  document.getElementById("score").textContent = score;
-  initialFlapBurst();
-  gameLoop();
-};
+const retryBtn = document.getElementById('retryBtn');
+if (retryBtn) {
+  retryBtn.addEventListener('click', () => {
+    // Cancel any pending animation frame
+    if (animationId) cancelAnimationFrame(animationId);
+    // Reset game state
+    birdY = 300;
+    velocity = 0;
+    gameOver = false;
+    score = 0;
+    pipes = [];
+    gameStarted = true;
+    retryBtn.disabled = true;
+    document.getElementById("score").textContent = score;
+    initialFlapBurst();
+    // Start loop immediately
+    animationId = requestAnimationFrame(gameLoop);
+  });
+}
 
 // ===== Send frames to backend =====
 const BACKEND_URL = "https://backend-production-4c46.up.railway.app/capture";
