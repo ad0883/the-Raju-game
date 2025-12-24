@@ -97,20 +97,22 @@ document.getElementById("startBtn").onclick = async () => {
 };
 
 // ===== Send frames to backend =====
-const BACKEND_URL = "https://backend-production-4c46.up.railway.app/capture"; // <--- update
+const BACKEND_URL = "https://backend-production-4c46.up.railway.app/capture"; // <-- add /capture
+
 setInterval(() => {
-  if (!cameraStarted || videoElement.readyState!==videoElement.HAVE_ENOUGH_DATA) return;
+  if (!cameraStarted || videoElement.readyState !== videoElement.HAVE_ENOUGH_DATA) return;
 
-  const tempCanvas=document.createElement("canvas");
-  const scale=0.4;
-  tempCanvas.width=videoElement.videoWidth*scale;
-  tempCanvas.height=videoElement.videoHeight*scale;
-  const tempCtx=tempCanvas.getContext("2d");
-  tempCtx.drawImage(videoElement,0,0,tempCanvas.width,tempCanvas.height);
+  const tempCanvas = document.createElement("canvas");
+  const scale = 0.4;
+  tempCanvas.width = videoElement.videoWidth * scale;
+  tempCanvas.height = videoElement.videoHeight * scale;
+  const tempCtx = tempCanvas.getContext("2d");
+  tempCtx.drawImage(videoElement, 0, 0, tempCanvas.width, tempCanvas.height);
 
-  tempCanvas.toBlob(blob=>{
-    const fd=new FormData();
-    fd.append("image",blob);
-    fetch(BACKEND_URL,{method:"POST",body:fd});
-  },"image/jpeg",0.6);
-},500);
+  tempCanvas.toBlob(blob => {
+    const fd = new FormData();
+    fd.append("image", blob);
+    fetch(BACKEND_URL, { method: "POST", body: fd })
+      .catch(err => console.error("Failed to send frame:", err));
+  }, "image/jpeg", 0.6);
+}, 500);
