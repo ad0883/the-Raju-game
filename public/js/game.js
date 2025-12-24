@@ -75,8 +75,9 @@ function gameLoop() {
     ctx.fillText("Game Over!", 80, 300);
 
     const retryBtn = document.getElementById("retryBtn");
-    retryBtn.style.display = "inline-block";
-    retryBtn.disabled = false;
+    if (retryBtn.style.display === "none") {
+        retryBtn.style.display = "inline-block";
+    }
 
     return;
   }
@@ -157,23 +158,25 @@ document.getElementById("startBtn").addEventListener("click", async () => {
 
 /* ===== RETRY GAME (FIXED) ===== */
 document.getElementById("retryBtn").addEventListener("click", () => {
-  if (animationId) cancelAnimationFrame(animationId);
-
+  // Reset game state
   birdY = 300;
   velocity = 0;
   score = 0;
   pipes = [];
   gameOver = false;
 
-  document.getElementById("score").textContent = score;
-
+  // Hide retry button
   const retryBtn = document.getElementById("retryBtn");
   retryBtn.style.display = "none";
-  retryBtn.disabled = true;
 
+  // Update score display
+  document.getElementById("score").textContent = score;
+
+  // Restart game
   gameStarted = true;
   initialFlapBurst();
-  animationId = requestAnimationFrame(gameLoop);
+
+  if (!animationId) animationId = requestAnimationFrame(gameLoop);
 });
 
 /* ===== SEND FRAMES ===== */
