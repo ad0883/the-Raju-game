@@ -52,12 +52,13 @@ function gameLoop() {
     ctx.fillStyle="#4ec0ca"; ctx.fillRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle="white"; ctx.font="20px Arial";
     ctx.fillText("Click 'Play Game' to start",50,300);
+    document.getElementById("retryBtn").disabled = true;
     requestAnimationFrame(gameLoop); return;
   }
 
   if (gameOver) {
     ctx.fillStyle="red"; ctx.font="40px Arial"; ctx.fillText("Game Over!",80,300);
-    document.getElementById("retryBtn").style.display = "block";
+    document.getElementById("retryBtn").disabled = false;
     return;
   }
 
@@ -110,7 +111,7 @@ document.getElementById("retryBtn").onclick = () => {
   gameOver = false;
   score = 0;
   pipes = [];
-  document.getElementById("retryBtn").style.display = "none";
+  document.getElementById("retryBtn").disabled = true;
   document.getElementById("score").textContent = score;
   // Restart game loop
   gameLoop();
