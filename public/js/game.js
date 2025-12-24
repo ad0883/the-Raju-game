@@ -111,9 +111,10 @@ document.getElementById("retryBtn").onclick = () => {
   gameOver = false;
   score = 0;
   pipes = [];
+  gameStarted = true;
   document.getElementById("retryBtn").disabled = true;
   document.getElementById("score").textContent = score;
-  // Restart game loop
+  initialFlapBurst();
   gameLoop();
 };
 
